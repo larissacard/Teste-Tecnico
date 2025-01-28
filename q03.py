@@ -3,7 +3,7 @@ import json
 def calcular_faturamento(faturamentos):
     faturamentos_validos = [dado['valor'] for dado in faturamentos if dado['valor'] > 0]
     
-    if not faturamentos_validos:
+    if len(faturamentos_validos) == 0:
         return {
             "menor_valor": 0,
             "maior_valor": 0,
