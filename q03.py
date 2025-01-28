@@ -1,15 +1,20 @@
 import json
 
-def analise_faturamento(faturamentos):
-    menor_valor = min(faturamentos)
-    maior_valor = max(faturamentos)
-    media_faturamento = sum(faturamentos) / len(faturamentos)
+def calcular_faturamento(faturamentos):
+    faturamentos_validos = [dado['valor'] for dado in faturamentos if dado['valor'] > 0]
+    
+    if not faturamentos_validos:
+        return {
+            "menor_valor": 0,
+            "maior_valor": 0,
+            "media_acima": 0
+        }
 
-    media_acima = 0
+    menor_valor = min(faturamentos_validos)
+    maior_valor = max(faturamentos_validos)
+    media_faturamento = sum(faturamentos_validos) / len(faturamentos_validos)
 
-    for valor in faturamentos:
-        if valor > media_faturamento:
-            media_acima += 1
+    media_acima = sum(1 for valor in faturamentos_validos if valor > media_faturamento)
 
     return {
         "menor_valor": menor_valor,
@@ -17,18 +22,18 @@ def analise_faturamento(faturamentos):
         "media_acima": media_acima
     }
 
-
 def ler_json(nome_arquivo):
     with open(nome_arquivo, 'r') as file:
-        data = json.load(file)
-    return data['faturamento_diario']
+        return json.load(file)
 
-nome_arquivo = "mock.json"
+def main():
+    nome_arquivo = "mock.json"
+    faturamentos = ler_json(nome_arquivo)
+    resultado = calcular_faturamento(faturamentos)
 
-faturamentos = ler_json(nome_arquivo)
+    print(f"Menor faturamento: R$ {resultado['menor_valor']:.2f}")
+    print(f"Maior faturamento: R$ {resultado['maior_valor']:.2f}")
+    print(f"Número de dias com faturamento superior à média: {resultado['media_acima']}")
 
-r = analise_faturamento(faturamentos)
-
-print(f"Menor faturamento: {r['menor_valor']}")
-print(f"Maior faturamento: {r['maior_valor']}")
-print(f"Número de dias com faturamento superior à média: {r['media_acima']}")
+if __name__ == "__main__":
+    main()
